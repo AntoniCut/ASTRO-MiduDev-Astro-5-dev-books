@@ -1,0 +1,99 @@
+---
+//  -------------------------------------------------------------
+//  ----------  /dev-books/src/pages/libro/[id].astro  ----------
+//  -------------------------------------------------------------
+
+
+import { getCollection, render } from "astro:content";
+
+import Layout from "../../layouts/Layout.astro";
+import "@/styles/global.css";
+
+import { SHOW_BUY_BUTTON } from "astro:env/server";
+import AmazonLogo from "../../components/AmazonLogo.astro";
+import BookScore from "../../components/BookScore.astro";
+import BuyButton from "../../components/BuyButton.astro";
+
+
+export async function getStaticPaths() {
+  	const books = await getCollection("books");
+
+  	return books.map((book) => ({
+    	params: { id: book.slug },
+    	props: { book },
+  	}));
+}
+
+
+const { book } = Astro.props;
+const { data, slug } = book;
+const { title, author, img, readtime, description, buy } = data;
+
+const { Content } = await render(book);
+export const prerender = true;
+
+---
+
+
+<Layout title={`${title} - Dev Books`}>
+  	
+	<div class="flex gap-12">
+    	
+		<aside class="flex flex-col items-center gap-4">
+      		
+			<a href="/" class="hover:underline opacity-70"> ← Volver atrás </a>
+
+      		<img
+        		transition:name={`img-${slug}`}
+        		class="rounded w-72 h-auto"
+        		src={`/${img}`}
+        		alt={title}
+      		/>
+
+			<!-- <span class="text-xs" id="score"> </span> -->
+      		<BookScore server:defer id={slug}> 
+				<span slot="fallback" class="text-xs opacity-70"> Cargando puntuación... </span>
+      		</BookScore>
+
+      		{SHOW_BUY_BUTTON && <BuyButton server:defer buy={buy} />}
+
+    	</aside>
+
+    	<main class="max-w-3xl">
+      
+			<h1 transition:name={`title-${slug}`} class="text-4xl font-bold mb-4"> {title} </h1>
+      		<div class="prose prose-invert"><Content /></div>
+    
+		</main>
+
+  	</div>
+
+</Layout>
+
+
+<!-- 
+
+**********  ESTO ES EN EL CLIENTE - IR A astro:config:mjs y cambiar context: 'client' por server  **********
+**********	SCORE_API_ENDPOINT: envField.string({ context: 'server', access: 'public' })  ******************
+
+<script>
+
+	import { SCORE_API_ENDPOINT } from "astro:env/client";
+
+	document.addEventListener('astro:page-load', () => {
+
+		const scoreElement = document.querySelector('#score')
+	
+		fetch(SCORE_API_ENDPOINT)
+			.then( res => res.text())
+			.then(scoreValue => {
+
+				if(scoreElement) {
+					scoreElement.innerHTML = ` ⭐ Puntuación: ${scoreValue.trim()}/5`;
+				}
+			})
+	})
+
+</script> 
+
+-->

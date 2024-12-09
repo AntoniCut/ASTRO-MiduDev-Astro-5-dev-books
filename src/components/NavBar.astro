@@ -1,0 +1,46 @@
+---
+
+//  --------------------------------------------------------------
+//  ----------  /dev-books/src/components/NavBar.astro  ----------
+//  --------------------------------------------------------------
+
+---
+
+
+<style>
+
+    .navbar {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 400px;
+        padding: 10px 20px;
+    }
+
+    .navbar__list {
+        display: flex;
+        gap: 20px;
+    }
+
+    .navbar__item {
+        padding: 10px 20px;
+        background-color: #AC50F0;
+    }
+
+    a { 
+        cursor: pointer; 
+        color: #eeeeee;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+</style>
+
+<nav class="navbar">
+
+    <ul class="navbar__list">
+        <li class="navbar__item"> <a href="/"> Home </a> </li>
+        <li class="navbar__item"> <a href="/welcome"> Welcome Astro 5 </a> </li>
+    </ul>
+</nav>
+
